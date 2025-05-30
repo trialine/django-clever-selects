@@ -32,8 +32,6 @@ class ChainedModelChoiceField(ModelChoiceField):
         self.parent_field = parent_field
         self.ajax_url = ajax_url
         self.model = model
-        # self.queryset = model.objects.all()  # Large querysets could take long time to load all values (django-cities)
-        self.queryset = model.objects.none()
         self.empty_label = empty_label
 
         defaults = {
@@ -41,7 +39,7 @@ class ChainedModelChoiceField(ModelChoiceField):
         }
         defaults.update(kwargs)
 
-        super(ChainedModelChoiceField, self).__init__(queryset=self.queryset, empty_label=empty_label, *args, **defaults)
+        super(ChainedModelChoiceField, self).__init__(queryset=model.objects.none(), empty_label=empty_label, *args, **defaults)
 
     def valid_value(self, value):
         """Dynamic choices so just return True for now"""
@@ -76,11 +74,10 @@ class ChainedModelMultipleChoiceField(ModelMultipleChoiceField):
         self.parent_field = parent_field
         self.ajax_url = ajax_url
         self.model = model
-        self.queryset = model.objects.all()
 
         defaults = {
             'widget': ChainedSelectMultiple(parent_field=parent_field, ajax_url=ajax_url),
         }
         defaults.update(kwargs)
 
-        super(ChainedModelMultipleChoiceField, self).__init__(queryset=self.queryset, *args, **defaults)
+        super(ChainedModelMultipleChoiceField, self).__init__(queryset=model.objects.all(), *args, **defaults)
